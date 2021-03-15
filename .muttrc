@@ -1,0 +1,49 @@
+set editor="vim"
+set markers=no
+
+set signature="~/.config/mutt/signature"
+
+set my_name="`cat ~/.config/mutt/realname`"
+set imap_user=`cat ~/.config/mutt/email`
+set imap_pass=`gpg --decrypt ~/.config/mutt/password.gpg 2>/dev/null`
+
+set my_domain=`cat ~/.config/mutt/domain`
+set my_host=`cat ~/.config/mutt/host`
+
+set folder=imaps://$my_host/
+set spoolfile=+INBOX
+
+set imap_check_subscribed
+
+set my_pass=$imap_pass
+set my_user=$imap_user
+
+set realname=$my_name
+set from=$my_user
+set use_from = yes
+
+set smtp_pass=$my_pass
+set smtp_url=smtp://$my_user@$my_host:587
+set ssl_force_tls = yes
+
+set mail_check = 30
+set timeout = 30
+
+bind index "R" imap-fetch-mail
+
+source ~/.config/mutt/dracula.muttrc
+
+set sort = reverse-date-received
+set copy = yes
+set postponed = "~/.drafts"
+set record = "~/.sent"
+
+auto_view text/html
+alternative_order text/plain text/enriched text/html
+
+bind index,pager g group-reply
+
+set crypt_autosign = yes
+set pgp_use_gpg_agent = yes
+source ~/.gpg.rc
+

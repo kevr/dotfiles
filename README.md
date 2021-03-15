@@ -18,6 +18,15 @@ programs that they configure.
     * `.vimrc`
     * `.vim/autoload/plug.vim`
     * `.vim/coc-settings.json`
+* **mutt**
+    * `.muttrc`
+    * `.config/mutt/domain`
+    * `.config/mutt/dracula.muttrc`
+    * `.config/mutt/email`
+    * `.config/mutt/host`
+    * `.config/mutt/password.gpg`
+    * `.config/mutt/realname`
+    * `.config/mutt/signature`
 * **alacritty**
     * `.config/alacritty/alacritty.yml`
 * **fontconfig**
