@@ -19,6 +19,8 @@ programs that they configure.
 * **fontconfig**
     * `.config/fontconfig/fonts.conf`
     * `.fonts/*.ttf`
+* **i3wm**
+    * `.config/i3/config`
 
 ### Author
 
