@@ -14,6 +14,10 @@ programs that they configure.
     * `.zsh.greet`
 * **tmux**
     * `.tmux.conf`
+* **vim**
+    * `.vimrc`
+    * `.vim/autoload/plug.vim`
+    * `.vim/coc-settings.json`
 * **alacritty**
     * `.config/alacritty/alacritty.yml`
 * **fontconfig**

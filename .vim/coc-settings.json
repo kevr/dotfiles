@@ -1,0 +1,26 @@
+{
+    "languageserver": {
+        "ccls": {
+            "command": "ccls",
+            "filetypes": ["cc", "c", "h", "hpp", "cpp", "objcpp"],
+            "rootPatterns": [".ccls", "compile_commands.json"],
+            "initializationOptions": {
+                "cache": {
+                    "directory": "/tmp/ccls"
+                },
+                "highlight": { "lsRanges" : true }
+            }
+        },
+        "pyls": {
+            "command": "pyls",
+            "filetypes": ["py", "pyc", "python"],
+            "rootPatterns": [".vim/"],
+            "initializationOptions": {
+                "cache": {
+                    "directory": "/tmp/pyls"
+                },
+                "highlight": { "lsRanges" : true }
+            }
+        }
+    }
+}
