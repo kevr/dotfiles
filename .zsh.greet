@@ -1,0 +1,4 @@
+echo
+echo "Date: $(date)"
+cowsay -st "Hi $USER, welcome to $(cat /etc/hostname)!"
+echo
