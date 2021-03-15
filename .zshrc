@@ -108,6 +108,34 @@ function glog() {
     git log --pretty=oneline "$@"
 }
 
+function _deploy() {
+    if [ -f './scripts/deploy.sh' ]; then
+        DEPLOY='./scripts/deploy.sh'
+    elif [ -f '../scripts/deploy.sh' ]; then
+        DEPLOY='../scripts/deploy.sh'
+    else
+        echo 'error: no $DEPLOY script found'
+        return 1
+    fi
+    bash $DEPLOY "$@"
+}
+
+function nano_deploy() {
+    export PORT='/dev/ttyUSB0'
+    export PART='atmega328p'
+    export PROGRAMMER='arduino'
+    export BAUD=115200
+    _deploy "$@"
+}
+
+function mega_deploy() {
+    export PORT='/dev/ttyACM0'
+    export PART='atmega2560'
+    export PROGRAMMER='wiring'
+    export BAUD=115200
+    _deploy "$@"
+}
+
 # Requires nvm to be installed.
 source $HOME/.nvm/nvm.sh
 nvm use 14.14.0
