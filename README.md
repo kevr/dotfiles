@@ -16,6 +16,9 @@ programs that they configure.
     * `.tmux.conf`
 * **alacritty**
     * `.config/alacritty/alacritty.yml`
+* **fontconfig**
+    * `.config/fontconfig/fonts.conf`
+    * `.fonts/*.ttf`
 
 ### Author
 
