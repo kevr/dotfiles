@@ -1,0 +1,44 @@
+#!/bin/zsh
+
+function genhtml() {
+    sed -i 's;fail_under;#fail_under;g' .coveragerc
+    coverage report
+    coverage html
+    sed -i 's;#fail_under;fail_under;g' .coveragerc
+    if [ "$1" = '-o' ]; then
+        $BROWSER htmlcov/index.html
+    fi
+}
+
+function ssh() {
+    command ssh -4 "$@"
+}
+
+function py39() {
+    source $(pyenv root)/versions/venv/bin/activate
+}
+
+function pytest-cov() {
+    rm -f .coverage
+
+    coverage run --append $(which pytest) "$@"
+    [[ $? -ne 0 ]] && return
+
+    coverage html
+    [[ $? -ne 0 ]] && return
+
+    coverage report
+    [[ $? -ne 0 ]] && return
+}
+
+function gslog() {
+    git log --pretty=oneline "$@" | sed -r 's/\(HEAD -> .*\)//'
+}
+
+function aur-coverage() {
+    export PYTHONPATH="$(pwd)"
+    ./util/fix-coverage cache/.coverage
+    coverage html
+    coverage report
+}
+

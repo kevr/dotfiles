@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+alias dcd="docker-compose down --remove-orphans"
+alias dcu="docker-compose up"
+alias dcl="docker-compose logs"

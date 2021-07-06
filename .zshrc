@@ -12,6 +12,7 @@ setopt noextendedglob
 
 # Standard aliases.
 alias ls="ls --color=auto"
+alias gitgrep="git log --pretty=oneline | grep $@"
 
 # Many of my projects have these scripts, so create nice
 # aliases for them.
@@ -136,7 +137,55 @@ function mega_deploy() {
     _deploy "$@"
 }
 
+function siglent_screenshot() {
+    rm -f /tmp/siglent.bmp
+    lxi screenshot /tmp/siglent.bmp \
+        --address 192.168.0.91 \
+        --plugin siglent-sds >/dev/null 2>&1 | grep -q '^convert-.*:'
+    convert /tmp/siglent.bmp "$1"
+}
+
+function ffind() {
+    find . -type f "$@"
+}
+
+function dfind() {
+    find . -type d "$@"
+}
+
+function mastermerge() {
+    git checkout master
+    git pull origin master
+    git checkout "$1"
+    git merge master
+    git push origin "$1"
+}
+
+function aurtest() {
+    rm -f .coverage
+    echo "Initializing test DB..."
+    rm -f aurweb.sqlite3
+    AUR_CONFIG=conf/config python3 -m aurweb.initdb
+    AUR_CONFIG=conf/config coverage run $(which pytest) "$@" test
+}
+
 # Requires nvm to be installed.
 source $HOME/.nvm/nvm.sh
 nvm use 14.14.0
 
+export GIT_SSH_COMMAND='ssh -4'
+
+source "$HOME/.zsh.functions"
+source "$HOME/.zsh.aliases"
+
+# If .envrc exists in the directory where zsh starts, source it.
+[[ -f .envrc ]] && source .envrc
+export PYTHONPATH
+export AUR_CONFIG
+
+export PYTHONPATH="${PYTHONPATH}:/home/kevr/.local/lib/python3.9/site-packages"
+
+# Drop the user into pyenv virtualenv.
+eval "$(pyenv init --path)"
+eval "$(pyenv virtualenv-init -)"
+source $(pyenv root)/versions/venv/bin/activate
