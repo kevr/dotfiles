@@ -1,0 +1,36 @@
+font:
+  normal:
+    family: Consolas
+    style: Bold
+  bold:
+    family: Consolas
+    style: Bold
+  size: 11
+
+tabspaces: 4
+
+schemes:
+  term_dark: &dark
+    primary:
+      background: '#333333'
+      foreground: '#fdfdfd'
+    normal:
+      black: '#333333'
+      red: '#e27777'
+      green: '#b6ffb5'
+      yellow: '#ffe77e'
+      blue: '#75acf3'
+      magenta: '#da8bff'
+      cyan: '#ffcb65'
+      white: '#fdfdfd'
+    bright:
+      black: '#333333'
+      red: '#e27777'
+      green: '#b6ffb5'
+      yellow: '#ffe77e'
+      blue: '#75acf3'
+      magenta: '#da8bff'
+      cyan: '#ffcb65'
+      white: '#fdfdfd'
+
+colors: *dark

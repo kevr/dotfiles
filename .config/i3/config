@@ -35,7 +35,7 @@ ipc-socket /tmp/i3.ipc
 #bindsym $mod+Return exec i3-sensible-terminal
 #bindsym $mod+Return exec gnome-terminal
 #bindsym $mod+Return exec st -f 'Monospace:size=11'
-bindsym $mod+Return exec --no-startup-id ~/.cargo/bin/alacritty -e 'tmux'
+bindsym $mod+Return exec --no-startup-id ~/.cargo/bin/alacritty --config-file ~/.config/alacritty/alacritty.tiny.yml -e 'tmux'
 bindsym $mod+Control+Return exec --no-startup-id ~/.cargo/bin/alacritty -e 'tmux'
 
 # kill focused window
@@ -193,6 +193,8 @@ for_window [class="Rocket League"] floating enable
 for_window [class="Virt-manager"] floating enable
 for_window [class="Zoom"] floating enable
 for_window [class="Kicad"] floating enable
+for_window [class="GerbView"] floating enable
+for_window [class="Pcbnew"] floating enable
 
 for_window [class="Chromium"] border none
 
@@ -206,6 +208,10 @@ exec --no-startup-id sh ~/.fehbg
 
 # This is used to trigger data.automount via our fstab spec.
 exec --no-startup-id bash -c "ls /data"
+exec --no-startup-id bash -c "sxhkd &"
 
 # Restart the i3 window manager.
 exec --no-startup-id i3-msg -t command restart
+exec --no-startup-id bash ~/.local/bin/start-keepassxc
+exec --no-startup-id xrandr --output DVI-I-1-1 --auto --right-of DP-4
+
