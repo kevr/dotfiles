@@ -1,25 +1,47 @@
 {
+    "markdownlint.config": {
+        "MD034": false,
+        "MD014": false,
+        "MD007": false,
+        "MD033": false
+    },
+
+    "python.formatting.provider": "autopep8",
+    "python.formatting.autopep8Path": "/home/kevr/.pyenv/versions/3.9.5/envs/venv/bin/autopep8",
+    "python.linting.enabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Path": "/home/kevr/.pyenv/versions/3.9.5/envs/venv/bin/flake8",
+    "python.sortImports.path": "/home/kevr/.pyenv/versions/3.9.5/envs/venv/bin/isort",
+    "python.sortImports.args": ["--om"],
+    "pyright.organizeimports.provider": "isort",
+    "pyright.disableDiagnostics": true,
+
     "languageserver": {
         "ccls": {
             "command": "ccls",
-            "filetypes": ["cc", "c", "h", "hpp", "cpp", "objcpp"],
-            "rootPatterns": [".ccls", "compile_commands.json"],
+            "filetypes": [
+                "c",
+                "cc",
+                "h",
+                "hpp",
+                "cpp",
+                "objc",
+                "objcpp"
+            ],
+            "rootPatterns": [
+                ".ccls",
+                "compile_commands.json",
+                ".vim/",
+                ".git/",
+                ".hg/"
+            ],
             "initializationOptions": {
                 "cache": {
                     "directory": "/tmp/ccls"
                 },
-                "highlight": { "lsRanges" : true }
-            }
-        },
-        "pyls": {
-            "command": "pyls",
-            "filetypes": ["py", "pyc", "python"],
-            "rootPatterns": [".vim/"],
-            "initializationOptions": {
-                "cache": {
-                    "directory": "/tmp/pyls"
-                },
-                "highlight": { "lsRanges" : true }
+                "highlight": {
+                    "lsRanges": true
+                }
             }
         }
     }
