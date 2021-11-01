@@ -1,5 +1,27 @@
 #!/bin/zsh
 
+alias ls="ls --color=auto"
+alias gitgrep="git log --pretty=oneline | grep $@"
+
+alias tag="sh scripts/tag.sh"
+alias run_tests="sh scripts/run_tests.sh"
+
+alias ver="version"
+
 alias dcd="docker-compose down --remove-orphans"
 alias dcu="docker-compose up"
 alias dcl="docker-compose logs"
+alias dct="docker-compose run test"
+alias dcr="docker-compose run"
+
+alias vim="nvim"
+
+function dch() {
+    echo "Aliases:
+    dcd | docker-compose down --remove-orphans
+    dcu | docker-compose up
+    dcl | docker-compose logs
+    dct | docker-compose run test
+"
+}
+

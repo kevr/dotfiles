@@ -1,5 +1,55 @@
 #!/bin/zsh
 
+# Many of my projects have these scripts, so create nice
+# aliases for them.
+
+function version() {
+    curdir="$(pwd)"
+    while [[ ! -f $curdir/scripts/get_version.sh ]]; do
+        if [ "$curdir" = "/" ]; then
+            echo "No scripts/get_version.sh found."
+            return 1
+        fi
+        curdir=$(readlink -f "$curdir/..")
+    done
+
+    sh $curdir/scripts/get_version.sh
+}
+
+# A simple function that produces a git string for any
+# repository the prompt is currently in.
+#
+# Example: git:repoName/master
+#
+function brname() {
+    repo=$(git remote -v 2>/dev/null \
+        | egrep 'origin.*push' \
+        | sed -r 's/^.*:(.+)\.git.*$/\1/')
+    if [ -z "$repo" ]; then
+        repo=$(git remote -v 2>/dev/null \
+            | egrep 'origin.*push' \
+            | sed -r 's/^.*:(.+) \(push\)$/\1/')
+    fi
+
+    # If the repo has a / in it, get the second part of it.
+    if echo "$repo" | grep -q '/'; then
+        repo=$(echo "$repo" | cut -d '/' -f 2)
+    fi
+
+    a=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    if [ -n "$a" ]; then
+        echo "git:${repo}/%F{yellow}${a}%f "
+    else
+        echo ""
+    fi
+}
+
+function fvim() {
+    vim -o `fzf`
+}
+
+
+
 function genhtml() {
     sed -i 's;fail_under;#fail_under;g' .coveragerc
     coverage report
@@ -15,7 +65,7 @@ function ssh() {
 }
 
 function py39() {
-    source $(pyenv root)/versions/venv/bin/activate
+    source $(pyenv root)/versions/3.9.5/envs/venv/bin/activate
 }
 
 function pytest-cov() {
@@ -36,9 +86,177 @@ function gslog() {
 }
 
 function aur-coverage() {
-    export PYTHONPATH="$(pwd)"
     ./util/fix-coverage cache/.coverage
     coverage html
     coverage report
 }
 
+function backritty() {
+    screen -d -m alacritty -e tmux
+    exit
+}
+
+function mpclist() {
+    mpc playlist -f '%position%: %artist% - %title%' | grep "$*"
+}
+
+function aurbase() {
+    export PYTHONPATH=$(pwd)/..
+}
+
+function uviaur() {
+    AUR_CONFIG=/etc/aurweb/config uvicorn aurweb.asgi:app --reload --log-level debug
+}
+
+function activate() {
+    source ./venv/bin/activate
+}
+
+function py_installed() {
+    pip freeze
+}
+
+function aurweb-test() {
+    rm -f .coverage
+    AUR_CONFIG=conf/config make -C test
+    coverage report
+    coverage html
+    firefox htmlcov/index.html
+}
+
+function glog() {
+    git log --pretty=oneline "$@"
+}
+
+function _deploy() {
+    if [ -f './scripts/deploy.sh' ]; then
+        DEPLOY='./scripts/deploy.sh'
+    elif [ -f '../scripts/deploy.sh' ]; then
+        DEPLOY='../scripts/deploy.sh'
+    else
+        echo 'error: no $DEPLOY script found'
+        return 1
+    fi
+    bash $DEPLOY "$@"
+}
+
+function nano_deploy() {
+    export PORT='/dev/ttyUSB0'
+    export PART='atmega328p'
+    export PROGRAMMER='arduino'
+    export BAUD=115200
+    _deploy "$@"
+}
+
+function mega_deploy() {
+    export PORT='/dev/ttyACM0'
+    export PART='atmega2560'
+    export PROGRAMMER='wiring'
+    export BAUD=115200
+    _deploy "$@"
+}
+
+function siglent_screenshot() {
+    rm -f /tmp/siglent.bmp
+    lxi screenshot /tmp/siglent.bmp \
+        --address 192.168.0.91 \
+        --plugin siglent-sds >/dev/null 2>&1 | grep -q '^convert-.*:'
+    convert /tmp/siglent.bmp "$1"
+}
+
+function ffind() {
+    find . -type f "$@"
+}
+
+function dfind() {
+    find . -type d "$@"
+}
+
+function mastermerge() {
+    git checkout master
+    git pull origin master
+    git checkout "$1"
+    git merge master
+    git push origin "$1"
+}
+
+function aurtest() {
+    rm -f .coverage
+    echo "Initializing test DB..."
+    rm -f aurweb.sqlite3
+    AUR_CONFIG=conf/config python3 -m aurweb.initdb
+    AUR_CONFIG=conf/config coverage run $(which pytest) "$@" test
+}
+
+function aur-php-hyperfine() {
+    hyperfine --warmup 10 --min-runs 500 "curl --cookie AURSID=$AURSID https://localhost:8443/packages"
+}
+
+function aur-fastapi-hyperfine() {
+    hyperfine --warmup 10 --min-runs 500 "curl --cookie AURSID=$AURSID https://localhost:8444/packages"
+}
+
+function rgrep() {
+    grep "$2" "$1"
+}
+
+function git-rebase() {
+    params=()
+    base=
+
+    while [ $# -ne 0 ]; do
+        key="$1"
+        case "$key" in
+            -b|--base)
+                base="$2"
+                shift 2
+                ;;
+            *)
+                params+=("$key")
+                shift
+                ;;
+        esac
+    done
+
+    if [ -z "$base" ]; then
+        echo "error: no --base specified"
+        return 1
+    fi
+
+    if ! (git branch | grep -qoP "^[* ] \K($base)$"); then
+        echo "error: base branch '$base' does not exist."
+        return 2
+    fi
+
+    current="$(git branch | grep -oP '^[*] \K(.+)$')"
+    echo "Starting on $current..."
+
+    for param in $params; do
+        if [ "$param" = "$base" ]; then
+            continue
+        fi
+
+        echo -n "Getting ready to rebase '$param' onto '$base', press [Enter] to continue..."
+        while [ true ]; do
+            read -t 1
+            if [ $? -eq 0 ]; then
+                break
+            fi
+        done
+
+        git checkout $param
+        git rebase -i $base
+        echo "Rebased '$param' onto '$base'."
+    done
+
+    echo "Returning to original branch: $current."
+    git checkout $current
+}
+
+function docker-compose-build-and-clean() {
+    if [ "$1" = "--no-cache" ]; then
+        docker-compose build --no-cache && docker image prune -f
+    else
+        docker-compose build && docker image prune -f
+    fi
+}
