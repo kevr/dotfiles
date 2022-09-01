@@ -1,5 +1,5 @@
 let b:ale_linters = {'python': ['vim-lsp']}
-let b:ale_fixers = {'python': ['autopep8', 'isort']}
+let b:ale_fixers = {'python': ['isort', 'black']}
 let b:ale_fix_on_save = 1
 
 let $AUR_CONFIG = 'conf/config'
