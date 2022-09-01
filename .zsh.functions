@@ -22,25 +22,9 @@ function version() {
 # Example: git:repoName/master
 #
 function brname() {
-    repo=$(git remote -v 2>/dev/null \
-        | egrep 'origin.*push' \
-        | sed -r 's/^.*:(.+)\.git.*$/\1/')
-    if [ -z "$repo" ]; then
-        repo=$(git remote -v 2>/dev/null \
-            | egrep 'origin.*push' \
-            | sed -r 's/^.*:(.+) \(push\)$/\1/')
-    fi
-
-    # If the repo has a / in it, get the second part of it.
-    if echo "$repo" | grep -q '/'; then
-        repo=$(echo "$repo" | cut -d '/' -f 2)
-    fi
-
-    a=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-    if [ -n "$a" ]; then
-        echo "git:${repo}/%F{yellow}${a}%f "
-    else
-        echo ""
+    if git status >/dev/null 2>&1; then
+        br="$(~/.local/bin/brname)"
+        echo "git%F{cyan}:%f$br "
     fi
 }
 
@@ -196,67 +180,25 @@ function aur-fastapi-hyperfine() {
     hyperfine --warmup 10 --min-runs 500 "curl --cookie AURSID=$AURSID https://localhost:8444/packages"
 }
 
-function rgrep() {
-    grep "$2" "$1"
-}
-
-function git-rebase() {
-    params=()
-    base=
-
-    while [ $# -ne 0 ]; do
-        key="$1"
-        case "$key" in
-            -b|--base)
-                base="$2"
-                shift 2
-                ;;
-            *)
-                params+=("$key")
-                shift
-                ;;
-        esac
-    done
-
-    if [ -z "$base" ]; then
-        echo "error: no --base specified"
-        return 1
-    fi
-
-    if ! (git branch | grep -qoP "^[* ] \K($base)$"); then
-        echo "error: base branch '$base' does not exist."
-        return 2
-    fi
-
-    current="$(git branch | grep -oP '^[*] \K(.+)$')"
-    echo "Starting on $current..."
-
-    for param in $params; do
-        if [ "$param" = "$base" ]; then
-            continue
-        fi
-
-        echo -n "Getting ready to rebase '$param' onto '$base', press [Enter] to continue..."
-        while [ true ]; do
-            read -t 1
-            if [ $? -eq 0 ]; then
-                break
-            fi
-        done
-
-        git checkout $param
-        git rebase -i $base
-        echo "Rebased '$param' onto '$base'."
-    done
-
-    echo "Returning to original branch: $current."
-    git checkout $current
-}
-
-function docker-compose-build-and-clean() {
-    if [ "$1" = "--no-cache" ]; then
-        docker-compose build --no-cache && docker image prune -f
+function docker() {
+    if [ "$1" = "build" ]; then
+        command docker "$@"
+        command docker image prune -f
     else
-        docker-compose build && docker image prune -f
+        command docker "$@"
     fi
 }
+
+function test() {
+    rm -f .coverage
+    pytest "$@"
+}
+
+function csv() {
+    perl -pe 's/((?<=,)|(?<=^)),/ ,/g;' "$@" | column -t -s, | less  -F -S -X -K
+}
+
+function git-head() {
+    git rev-parse --short HEAD
+}
+

@@ -16,5 +16,5 @@ export PATH="$HOME/.local/bin:/usr/local/bin:${PATH}"
 export HISTSIZE=10000
 export SAVEHIST=10000
 
-# export MOZ_ENABLE_WAYLAND=0
-# export GDK_BACKEND=wayland
+# Wayland environment variables.
+export MOZ_ENABLE_WAYLAND=1
