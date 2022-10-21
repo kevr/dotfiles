@@ -15,6 +15,10 @@ setopt prompt_subst
 setopt no_hup
 setopt noextendedglob
 
+bindkey "\e[1~" beginning-of-line
+bindkey "\e[3~" delete-char
+bindkey "\e[4~" end-of-line
+
 # Include partial configurations.
 partials=('.fzf.zsh' '.zsh.greet' '.zsh.functions' '.zsh.aliases')
 for partial in $partials; do
